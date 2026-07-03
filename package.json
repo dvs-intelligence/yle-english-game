@@ -1,0 +1,12 @@
+{
+  "name": "yle-english-word-quest",
+  "version": "1.0.0",
+  "description": "劍橋兒童英檢單字與文法大冒險網頁遊戲",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 3000"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

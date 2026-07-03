@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="互動式劍橋兒童英檢 (YLE) 複習網頁遊戲 - 透過詞彙配對、單字拼寫、文法選擇與聽力測驗，輕鬆掌握 Starters, Movers, Flyers 的檢定內容！">
+  <title>YLE English Word Quest - 劍橋兒童英檢單字大冒險</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5N81ZP0F5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-R5N81ZP0F5');
+  </script>
+  <!-- Google Fonts: Outfit & Nunito for child-friendly premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Animated Background Elements -->
+  <div class="bg-bubble-container" id="bgBubbles"></div>
+
+  <!-- Main App Container -->
+  <main class="app-container">
+    
+    <!-- HEADER BAR -->
+    <header class="app-header">
+      <div class="logo-area" id="headerLogoBtn">
+        <span class="logo-emoji">🎓</span>
+        <h1 class="logo-title">YLE <span class="logo-highlight">Quest</span></h1>
+      </div>
+      <div class="header-actions">
+        <div class="user-greeting" id="userGreeting">👋 你好，<span id="userNameDisplay">探險家</span>！</div>
+        <button class="icon-btn" id="settingsBtn" title="設定">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- SCREEN 1: SPLASH / WELCOME -->
+    <section class="screen active" id="splashScreen">
+      <div class="welcome-card animate-fade-in">
+        <div class="welcome-mascot">🦁</div>
+        <h2 class="welcome-title">劍橋兒童英檢<br><span class="highlight-text">單字與文法大冒險</span></h2>
+        <p class="welcome-subtitle">透過好玩的遊戲，輕鬆複習 Starters, Movers 與 Flyers，讓英語能力突飛猛進！</p>
+
+        <!-- Dashboard Card for Progress and Scores -->
+        <div class="dashboard-card animate-fade-in">
+          <div class="dashboard-header">
+            <h3>📊 學習成就看板</h3>
+            <div class="dashboard-header-actions" style="display: flex; gap: 15px;">
+              <button class="text-link-btn" id="exportReportBtn" style="font-weight: 700;">📊 匯出報告</button>
+              <button class="text-link-btn" id="resetProgressBtn">重設紀錄</button>
+            </div>
+          </div>
+          
+          <div class="dashboard-global-score">
+            <span class="global-score-label">累積總得分</span>
+            <span class="global-score-val" id="dashTotalScore">0</span>
+          </div>
+
+          <!-- Badges Section -->
+          <div class="dashboard-badges-section">
+            <h4 class="badges-title">🏆 榮譽勳章</h4>
+            <div class="badges-list" id="badgesList">
+              <!-- Populated dynamically via JS -->
+            </div>
+          </div>
+
+          <div class="dashboard-levels-container">
+             <!-- Starters Progress Row -->
+            <div class="dashboard-level-row starters">
+              <div class="level-row-header">
+                <span class="level-row-title">🎈 Starters (入門級)</span>
+                <span class="level-row-stats" id="startersStatText">已記住 0 / 454 單字 (官方共 497 字)</span>
+              </div>
+              <div class="level-row-progress-bar-bg">
+                <div class="level-row-progress-bar-fill" id="startersProgressBar" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Movers Progress Row -->
+            <div class="dashboard-level-row movers">
+              <div class="level-row-header">
+                <span class="level-row-title">🚀 Movers (初級)</span>
+                <span class="level-row-stats" id="moversStatText">已記住 0 / 411 單字 (官方共 898 字)</span>
+              </div>
+              <div class="level-row-progress-bar-bg">
+                <div class="level-row-progress-bar-fill" id="moversProgressBar" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Flyers Progress Row -->
+            <div class="dashboard-level-row flyers">
+              <div class="level-row-header">
+                <span class="level-row-title">🦅 Flyers (進階級)</span>
+                <span class="level-row-stats" id="flyersStatText">已記住 0 / 433 單字 (官方共 1,411 字)</span>
+              </div>
+              <div class="level-row-progress-bar-bg">
+                <div class="level-row-progress-bar-fill" id="flyersProgressBar" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-note">
+            💡 <b>單字與題型篩選說明</b>：本遊戲收錄之詞彙均依 YLE 英檢官方字表精準分流與分級。排除專有名稱（如 Alex, Kim），將 121 個文法結構字（如 a, an, under, but）分配至「語法挑戰賽」以搭配英檢模擬句型；將具備圖像特徵的實詞均分至「連連看」與「聽力」；抽象字詞則導入「單字拼拼樂」以強化拼寫。各級別實際收錄字數為：Starters 454 字、Movers 411 字、Flyers 433 字，共計 1,298 字（含 121 個文法例句）。
+          </div>
+        </div>
+        
+        <div class="level-selector-container">
+          <p class="selector-label">請選擇你的挑戰級別：</p>
+          <div class="level-buttons">
+            <button class="level-card starters" data-level="starters">
+              <span class="level-badge">Pre A1</span>
+              <div class="level-card-info-group">
+                <span class="level-name">Starters</span>
+                <span class="level-desc">入門級 / 基礎詞彙</span>
+                <span class="level-vocab-info">📊 官方總字量 497 字</span>
+                <span class="level-progress-text" id="progress-starters">完成度 0%</span>
+              </div>
+              <span class="level-icon">🎈</span>
+            </button>
+            
+            <button class="level-card movers" data-level="movers">
+              <span class="level-badge">A1</span>
+              <div class="level-card-info-group">
+                <span class="level-name">Movers</span>
+                <span class="level-desc">初級 / 實用短句</span>
+                <span class="level-vocab-info">📊 官方總字量 898 字</span>
+                <span class="level-progress-text" id="progress-movers">完成度 0%</span>
+              </div>
+              <span class="level-icon">🚀</span>
+            </button>
+            
+            <button class="level-card flyers" data-level="flyers">
+              <span class="level-badge">A2</span>
+              <div class="level-card-info-group">
+                <span class="level-name">Flyers</span>
+                <span class="level-desc">進階級 / 句型與文法</span>
+                <span class="level-vocab-info">📊 官方總字量 1,411 字</span>
+                <span class="level-progress-text" id="progress-flyers">完成度 0%</span>
+              </div>
+              <span class="level-icon">🦅</span>
+            </button>
+          </div>
+
+          <!-- Special Wrong Words Challenge -->
+          <div class="special-challenge-container" id="wrongWordsCard" style="display: none;">
+            <button class="level-card wrong-words-challenge" id="wrongWordsChallengeBtn" style="width: 100%;">
+              <span class="level-badge" style="background: var(--color-error); color: white;">特訓</span>
+              <div class="level-card-info-group" style="text-align: left; flex: 1;">
+                <span class="level-name" style="color: #c92a2a;">錯題收納本</span>
+                <span class="level-desc" style="color: #e03131;">針對你答錯的單字進行強化特訓！</span>
+                <span class="level-vocab-info" id="wrongWordsCountText" style="color: #c92a2a; font-weight: bold;">目前累積 0 個錯字</span>
+              </div>
+              <span class="level-icon">🎯</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: GAME MAP / LEVEL SELECTION -->
+    <section class="screen" id="mapScreen">
+      <div class="screen-header">
+        <button class="back-btn" id="mapBackBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          返回級別
+        </button>
+        <div class="level-indicator">
+          <span class="level-indicator-icon" id="mapLevelIcon">🎈</span>
+          <span class="level-indicator-text" id="mapLevelName">Starters</span>
+        </div>
+      </div>
+
+      <div class="map-container">
+        <div class="map-path-line" id="mapPathLine"></div>
+        <div class="theme-nodes-container" id="themeNodesContainer">
+          <!-- Dynamic theme cards will be generated here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: GAME ARENA -->
+    <section class="screen" id="gameScreen">
+      <!-- Game Info Bar -->
+      <div class="game-hud">
+        <button class="hud-back-btn" id="gameExitBtn" title="退出遊戲">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+
+        <div class="hud-progress-container">
+          <div class="hud-progress-label">進度 <span id="currentQuestionNum">1</span>/<span id="totalQuestionsNum">5</span></div>
+          <div class="hud-progress-bar-bg">
+            <div class="hud-progress-bar-fill" id="gameProgressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div class="hud-stats">
+          <div class="hud-stat score">
+            <span class="hud-stat-icon">⭐</span>
+            <span class="hud-stat-value" id="gameScore">0</span>
+          </div>
+          <div class="hud-stat lives">
+            <span class="hud-stat-icon">❤️</span>
+            <span class="hud-stat-value" id="gameLives">3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mode Arenas Container -->
+      <div class="arena-card animate-bounce-in">
+        <!-- Game instructions -->
+        <div class="arena-instruction">
+          <span class="instruction-icon" id="instructionIcon">💡</span>
+          <span class="instruction-text" id="instructionText">請配對正確的圖片與單字！</span>
+        </div>
+
+        <!-- Dynamic Game Layouts -->
+        <div class="game-playground" id="gamePlayground">
+          
+          <!-- MODE 1: WORD MATCH (配對) -->
+          <div class="game-mode-layout" id="modeWordMatch">
+            <div class="match-grid" id="matchGrid">
+              <!-- Dynamically generated cards -->
+            </div>
+          </div>
+
+          <!-- MODE 2: SPELL MASTER (拼字) -->
+          <div class="game-mode-layout" id="modeSpellMaster">
+            <div class="spell-visual">
+              <div class="spell-image" id="spellImage">🦁</div>
+              <div class="spell-chinese-hint" id="spellChineseHint">中文提示</div>
+              <button class="audio-pulse-btn" id="spellAudioBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                朗讀單字
+              </button>
+            </div>
+            
+            <!-- Target spelling line -->
+            <div class="spell-slots" id="spellSlots">
+              <!-- Empty slots where letters will sit -->
+            </div>
+
+            <!-- Letter magnets selection -->
+            <div class="letter-magnets" id="letterMagnets">
+              <!-- Draggable/clickable letter buttons -->
+            </div>
+
+            <div class="spell-controls">
+              <button class="secondary-btn" id="spellClearBtn">清除</button>
+            </div>
+          </div>
+
+          <!-- MODE 3: GRAMMAR QUEST (文法選擇) -->
+          <div class="game-mode-layout" id="modeGrammarQuest">
+            <div class="grammar-question-area">
+              <div class="grammar-mascot">🦁</div>
+              <div class="grammar-bubble">
+                <p class="grammar-sentence" id="grammarSentence">The apple is <span class="blank-space">___</span> the table.</p>
+              </div>
+            </div>
+
+            <div class="grammar-options" id="grammarOptions">
+              <!-- 4 Choice cards -->
+            </div>
+          </div>
+
+          <!-- MODE 4: LISTENING POP (聽力大考驗) -->
+          <div class="game-mode-layout" id="modeListeningPop">
+            <div class="listening-trigger-container">
+              <button class="listening-giant-btn" id="listeningAudioBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="speaker-icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                <span>點擊播放發音</span>
+              </button>
+            </div>
+
+            <div class="listening-options" id="listeningOptions">
+              <!-- Image choice cards -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 5: LEVEL CLEAR / SUMMARY -->
+    <section class="screen" id="summaryScreen">
+      <div class="summary-card animate-bounce-in">
+        <div class="confetti-container" id="confettiContainer"></div>
+        
+        <h2 class="summary-title" id="summaryTitle">太棒了！關卡挑戰成功！</h2>
+        
+        <div class="stars-display" id="starsDisplay">
+          <span class="star animate-pop-in">⭐</span>
+          <span class="star animate-pop-in delay-1">⭐</span>
+          <span class="star animate-pop-in delay-2">⭐</span>
+        </div>
+
+        <div class="summary-stats">
+          <div class="summary-stat-box">
+            <div class="stat-num" id="summaryScore">0</div>
+            <div class="stat-label">總得分</div>
+          </div>
+          <div class="summary-stat-box">
+            <div class="stat-num" id="summaryAccuracy">0%</div>
+            <div class="stat-label">正確率</div>
+          </div>
+          <div class="summary-stat-box">
+            <div class="stat-num" id="summaryRemainingWords">0</div>
+            <div class="stat-label" id="summaryRemainingLabel">剩餘字數</div>
+          </div>
+        </div>
+
+        <div class="review-vocab-section">
+          <h3>本關學習單字：</h3>
+          <div class="vocab-pill-list" id="vocabPillList">
+            <!-- Dynamically generated words with speech buttons -->
+          </div>
+        </div>
+
+        <div class="summary-actions">
+          <button class="primary-btn" id="summaryMapBtn">返回地圖</button>
+          <button class="secondary-btn" id="summaryRestartBtn">繼續挑戰</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Copyright -->
+    <footer class="app-footer">
+      <p>© DVS Intelligence by Kevin Chang | Version 2.2.1</p>
+    </footer>
+
+  </main>
+
+  <!-- MODAL: SETTINGS -->
+  <dialog class="settings-modal" id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>遊戲設定</h2>
+        <button class="modal-close-btn" id="closeSettingsBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="settings-item">
+          <label for="volumeSlider">遊戲音效</label>
+          <div class="slider-container">
+            <span>🔈</span>
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.7">
+            <span>🔊</span>
+          </div>
+        </div>
+
+        <div class="settings-item">
+          <label for="speechVoice">發音角色/口音</label>
+          <select id="speechVoice" class="custom-select">
+            <!-- Populated via JS -->
+            <option value="default">預設英文語音</option>
+          </select>
+        </div>
+
+        <div class="settings-item">
+          <label for="speechRate">發音速度：<span id="speechRateVal">1.0</span>x</label>
+          <div class="slider-container">
+            <span>🐢</span>
+            <input type="range" id="speechRate" min="0.5" max="1.5" step="0.1" value="0.9">
+            <span>🐇</span>
+          </div>
+        </div>
+
+        <div class="settings-instructions">
+          <p>💡 <b>提示</b>：本遊戲使用您裝置內建的文字轉語音 (Text-to-Speech) 技術。如果語音無法播放，請確認您的裝置已連接網路並啟用英文發音引擎。</p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="primary-btn" id="saveSettingsBtn">確認</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: LOGIN / NAME ENTRY -->
+  <dialog class="settings-modal" id="loginModal" style="max-width: 400px; border-radius: 20px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15); padding: 0; overflow: hidden;">
+    <div class="modal-content" style="background: var(--color-card); border-radius: 20px; border: none;">
+      <div class="modal-header" style="background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary)); color: white; padding: 25px; border-bottom: none; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="display: flex; align-items: center; gap: 8px; margin: 0; font-family: 'Outfit', sans-serif; font-size: 1.5rem;">
+          <span>🎒</span> YLE Quest 登入
+        </h2>
+      </div>
+      <div class="modal-body" style="padding: 30px; font-family: 'Nunito', sans-serif;">
+        <div class="settings-item" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+          <label for="loginNameInput" style="font-weight: 800; color: var(--color-text); font-size: 1.1rem;">請輸入你的英文名字/暱稱：</label>
+          <input type="text" id="loginNameInput" class="custom-input" placeholder="例如：Kevin, K. Chang..." maxlength="15" autofocus style="width: 100%; padding: 15px; border-radius: 14px; border: 2px solid var(--color-border); font-family: inherit; font-size: 1.1rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: var(--color-bg);">
+        </div>
+        <p style="color: var(--color-text-muted); font-size: 0.9rem; margin: 0; line-height: 1.5;">💡 只能輸入「英文名字」或「英文暱稱」喔！(例如：Kevin，只接受英文字母、空格、點 . 或連字號 -)</p>
+      </div>
+      <div class="modal-footer" style="padding: 20px 30px 30px; border-top: none; background: transparent;">
+        <button class="primary-btn" id="loginSubmitBtn" style="width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 14px; font-weight: 800; box-shadow: 0 8px 20px rgba(var(--primary-hue), 0.3);">開始大冒險！</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: EXPORT REPORT -->
+  <dialog class="settings-modal" id="reportModal" style="max-width: 500px; width: 90%; max-height: 90vh; border-radius: 20px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15); padding: 0; overflow: hidden;">
+    <div class="modal-content" style="background: var(--color-card); border-radius: 20px; border: none; display: flex; flex-direction: column; max-height: 90vh;">
+      <div class="modal-header" style="background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary)); color: white; padding: 18px 20px; border-bottom: none; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+        <h2 style="margin: 0; font-family: 'Outfit', sans-serif; font-size: 1.3rem; display: flex; align-items: center; gap: 8px;">
+          <span>🏆</span> 學習成就報告單
+        </h2>
+        <button class="modal-close-btn" id="closeReportBtn" style="color: white; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px; font-family: 'Nunito', sans-serif; text-align: center; overflow-y: auto; flex: 1;">
+        <!-- Certificate Preview Container -->
+        <div id="reportCertificatePreview" style="background: radial-gradient(circle, #fffbf2 0%, #fff6e0 100%); border: 6px double #d4af37; padding: 20px 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: inset 0 0 20px rgba(212,175,55,0.1); position: relative;">
+          <!-- Security background elements -->
+          <div style="font-family: 'Outfit', sans-serif; color: rgba(212,175,55,0.12); font-size: 4rem; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); pointer-events: none; width: 100%;">YLE QUEST</div>
+          
+          <div style="font-size: 1.8rem; margin-bottom: 12px;">🏅</div>
+          <h3 style="font-family: 'Outfit', sans-serif; color: #a47e1b; margin: 0 0 10px; font-size: 1.2rem; letter-spacing: 2px; font-weight: 800;">學習成就證書</h3>
+          <p style="color: #666; font-size: 0.85rem; margin: 0 0 5px;">恭喜勇士</p>
+          <h2 id="reportNameText" style="font-family: var(--font-title); color: var(--color-text); margin: 0 0 8px; font-size: 1.5rem; font-weight: 800; border-bottom: 2px solid #d4af37; display: inline-block; padding: 0 10px 3px;">探險家</h2>
+          <p style="color: #444; font-size: 0.85rem; line-height: 1.5; margin: 8px 0 15px;">
+            在《YLE 劍橋兒童英檢單字大冒險》中展現非凡毅力，成功挑戰各大英檢關卡！
+          </p>
+          
+          <!-- Report statistics -->
+          <div style="background: rgba(255,255,255,0.7); border-radius: 8px; padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; text-align: left; margin: 0 auto; max-width: 320px; border: 1px dashed #d4af37;">
+            <!-- Row 1: Labels -->
+            <span style="font-size: 0.8rem; color: #666;">累積總得分</span>
+            <span style="font-size: 0.8rem; color: #666;">榮譽稱號</span>
+            
+            <!-- Row 2: Values (Aligned horizontally using shared grid track and flex middle) -->
+            <strong id="reportScoreText" style="font-size: 1.1rem; color: var(--color-primary); font-weight: 800; display: flex; align-items: center; height: 26px; margin: 0;">0 分</strong>
+            <strong id="reportTitleText" style="font-size: 0.85rem; color: #a47e1b; font-weight: 800; display: flex; align-items: center; height: 26px; margin: 0;">單字探險家 🐥</strong>
+            
+            <!-- Row 3: Progress details -->
+            <div style="grid-column: span 2; border-top: 1px solid rgba(212,175,55,0.2); padding-top: 6px; font-size: 0.8rem; color: #555; margin-top: 4px;">
+              🌟 <b>關卡完成進度：</b>
+              <div id="reportProgressText" style="font-weight: 700; margin-top: 2px; font-size: 0.75rem; line-height: 1.3;">
+                Starters: 0% | Movers: 0% | Flyers: 0%
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 15px; font-size: 0.7rem; color: #888; font-style: italic;">
+            DVS Intelligence by Kevin Chang 頒發
+          </div>
+        </div>
+        <p style="color: var(--color-text-muted); font-size: 0.8rem; margin: 0;">💡 點擊下方按鈕可將證書保存為圖片，分享給老師或爸爸媽媽喔！</p>
+      </div>
+      <div class="modal-footer" style="padding: 15px 20px 20px; border-top: none; display: flex; gap: 10px; background: transparent; flex-shrink: 0;">
+        <button class="secondary-btn" id="closeReportBtn2" style="flex: 1; padding: 10px; border-radius: 12px;">關閉</button>
+        <button class="primary-btn" id="downloadReportBtn" style="flex: 2; padding: 10px; font-weight: 800; border-radius: 12px;">📥 下載為圖片</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Scripts -->
+  <script src="vocabulary.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
