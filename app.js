@@ -203,6 +203,12 @@ class GameEngine {
   // Generate vector HTML structure with fallback
   getEmojiHtml(emojiChar, className = '') {
     if (!emojiChar) return '';
+    
+    // Support direct local or remote image files
+    if (emojiChar.startsWith('./') || emojiChar.startsWith('http')) {
+      return `<img class="emoji-vector ${className}" src="${emojiChar}" alt="image">`;
+    }
+
     const firstCodePoint = emojiChar.codePointAt(0);
     // Fallback directly to text if it's a circle letter or generic alphanumeric
     if (firstCodePoint < 0x1F000) {
@@ -796,16 +802,20 @@ class GameEngine {
   }
 
   // Next question controller
-  nextQuestion() {
+  nextQuestion(immediate = false) {
     this.currentQuestionIdx++;
     const total = this.getTotalQuestionsCount();
     
     if (this.currentQuestionIdx >= total) {
       this.completeGameLevel();
     } else {
-      setTimeout(() => {
+      if (immediate) {
         this.loadQuestion();
-      }, 1000);
+      } else {
+        setTimeout(() => {
+          this.loadQuestion();
+        }, 1000);
+      }
     }
   }
 
@@ -992,12 +1002,19 @@ class GameEngine {
     // Create target slots
     for (let i = 0; i < q.word.length; i++) {
       const slot = document.createElement('span');
-      slot.classList.add('spell-slot');
+      if (q.word[i] === ' ') {
+        slot.classList.add('spell-space-slot');
+        slot.innerHTML = '&nbsp;';
+        slot.style.borderBottom = 'none';
+        slot.style.width = '24px'; // Custom spacing for word separation
+      } else {
+        slot.classList.add('spell-slot');
+      }
       slots.appendChild(slot);
     }
 
-    // Prepare letter bubbles magnets
-    const wordLetters = q.word.split('');
+    // Prepare letter bubbles magnets (filter out spaces)
+    const wordLetters = q.word.split('').filter(char => char !== ' ');
     // Scramble letters
     const scrambled = [...wordLetters].sort(() => Math.random() - 0.5);
     
@@ -1020,10 +1037,73 @@ class GameEngine {
     // Clear button action
     const clearBtn = document.getElementById('spellClearBtn');
     const newClearBtn = clearBtn.cloneNode(true);
+    newClearBtn.disabled = false; // Reset disabled state from previous questions
     clearBtn.parentNode.replaceChild(newClearBtn, clearBtn);
     newClearBtn.addEventListener('click', () => {
       Sounds.playClick();
       this.resetSpelledWord();
+    });
+
+    // Give Up button action
+    const giveUpBtn = document.getElementById('spellGiveUpBtn');
+    const newGiveUpBtn = giveUpBtn.cloneNode(true);
+    newGiveUpBtn.textContent = '放棄';
+    newGiveUpBtn.disabled = false;
+    newGiveUpBtn.classList.remove('primary-btn');
+    newGiveUpBtn.classList.add('danger-btn');
+    giveUpBtn.parentNode.replaceChild(newGiveUpBtn, giveUpBtn);
+
+    let hasGivenUp = false;
+    newGiveUpBtn.addEventListener('click', () => {
+      Sounds.playClick();
+
+      if (hasGivenUp) {
+        // Second stage click: advance to the next question
+        if (this.lives > 0) {
+          this.nextQuestion(true);
+        }
+        return;
+      }
+
+      // First stage click: Give up this question
+      hasGivenUp = true;
+
+      // Disable letter magnets and clear button to prevent modifications
+      const magnets = document.querySelectorAll('.letter-magnet');
+      magnets.forEach(m => m.disabled = true);
+      newClearBtn.disabled = true;
+
+      // Fill in correct letters visually
+      const wordLetters = q.word.split('');
+      const slots = document.querySelectorAll('.spell-slot');
+      wordLetters.forEach((letter, i) => {
+        if (slots[i]) {
+          slots[i].textContent = letter;
+          slots[i].classList.add('filled');
+          // Highlight with warm orange / amber warning color to show it was revealed
+          slots[i].style.borderBottomColor = 'hsl(35, 90%, 50%)';
+          slots[i].style.color = 'hsl(35, 90%, 50%)';
+        }
+      });
+
+      // Deduct life
+      this.deductLife();
+
+      // Log spelling mistake (it goes to the review/wrong words book)
+      this.addWrongWordByWord(q.word);
+
+      // Speak the correct word
+      this.speakWord(q.word);
+
+      // If they still have lives left, change the button to "Next Question"
+      if (this.lives > 0) {
+        newGiveUpBtn.textContent = '下一題';
+        newGiveUpBtn.classList.remove('danger-btn');
+        newGiveUpBtn.classList.add('primary-btn');
+      } else {
+        // If game is over, keep button disabled
+        newGiveUpBtn.disabled = true;
+      }
     });
   }
 
@@ -1045,11 +1125,12 @@ class GameEngine {
       slots[fillIndex].classList.add('filled');
     }
 
-    // Check if word completed
-    if (this.spelledWord.length === targetWord.length) {
+    // Check if word completed (excluding spaces)
+    const targetNoSpaces = targetWord.replace(/\s+/g, '');
+    if (this.spelledWord.length === targetNoSpaces.length) {
       const q = this.currentTheme.questions[this.currentQuestionIdx];
       const combined = this.spelledWord.map(item => item.letter).join('');
-      if (combined === targetWord) {
+      if (combined === targetNoSpaces) {
         // Success
         Sounds.playSuccess();
         this.score += 20;
