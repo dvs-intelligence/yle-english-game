@@ -357,14 +357,22 @@ class GameEngine {
     document.getElementById('gameExitBtn').addEventListener('click', () => {
       Sounds.playClick();
       if (confirm('確定要退出遊戲嗎？目前的進度將不會被儲存。')) {
-        this.switchScreen('map');
+        if (this.currentTheme && this.currentTheme.mode === 'wrong_words_review') {
+          this.switchScreen('splash');
+        } else {
+          this.switchScreen('map');
+        }
       }
     });
 
     // Summary screen actions
     document.getElementById('summaryMapBtn').addEventListener('click', () => {
       Sounds.playClick();
-      this.switchScreen('map');
+      if (this.currentTheme && this.currentTheme.mode === 'wrong_words_review') {
+        this.switchScreen('splash');
+      } else {
+        this.switchScreen('map');
+      }
     });
     document.getElementById('summaryRestartBtn').addEventListener('click', () => {
       Sounds.playClick();
@@ -1546,6 +1554,15 @@ class GameEngine {
     } else {
       titleEl.textContent = '👍 挑戰成功！再接再厲！';
       titleEl.style.color = 'var(--color-text-main)';
+    }
+
+    const summaryMapBtn = document.getElementById('summaryMapBtn');
+    if (summaryMapBtn) {
+      if (this.currentTheme && this.currentTheme.mode === 'wrong_words_review') {
+        summaryMapBtn.textContent = '回首頁';
+      } else {
+        summaryMapBtn.textContent = '回關卡';
+      }
     }
 
     this.switchScreen('summary');
