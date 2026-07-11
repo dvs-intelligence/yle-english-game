@@ -1250,7 +1250,7 @@ class GameEngine {
 
     const blank = document.getElementById('grammarBlank');
 
-    if (selectedOption === qData.correct) {
+    if (selectedOption.toLowerCase() === qData.correct.toLowerCase()) {
       // Success
       Sounds.playSuccess();
       card.classList.add('correct');
@@ -1284,7 +1284,7 @@ class GameEngine {
       // Find and highlight correct answer cards
       allOptions.forEach(optCard => {
         const text = optCard.querySelector('.option-text').textContent;
-        if (text === qData.correct) {
+        if (text.toLowerCase() === qData.correct.toLowerCase()) {
           optCard.classList.add('correct');
         }
       });
